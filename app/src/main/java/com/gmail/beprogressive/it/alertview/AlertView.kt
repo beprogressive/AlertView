@@ -27,11 +27,21 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
 
     companion object {
         @JvmStatic
-        @BindingAdapter("alertMessage", "animationGravity")
-        fun setAlertMessage(view: AlertView, message: String?, animationGravity: Int?) {
+        @BindingAdapter("alertMessage")
+        fun setAlertMessage(view: AlertView, message: String?) {
             view.findViewById<TextView>(R.id.alert_tv).text = message
 
-            view.switchVisibilityErrorView(animationGravity)
+            view.switchVisibilityErrorView(null)
+            if (message == null || message == "") view.findViewById<TextView>(R.id.alert_tv).visibility = View.INVISIBLE
+            else view.findViewById<TextView>(R.id.alert_tv).visibility = View.VISIBLE
+        }
+
+        @JvmStatic
+        @BindingAdapter("alertMessage", "alertAnimationGravity")
+        fun setAlertMessage(view: AlertView, message: String?, alertAnimationGravity: Int?) {
+            view.findViewById<TextView>(R.id.alert_tv).text = message
+
+            view.switchVisibilityErrorView(alertAnimationGravity)
             if (message == null || message == "") view.findViewById<TextView>(R.id.alert_tv).visibility = View.INVISIBLE
             else view.findViewById<TextView>(R.id.alert_tv).visibility = View.VISIBLE
         }
@@ -63,9 +73,9 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
         return findViewById<TextView>(R.id.alert_tv).text.toString()
     }
 
-    private fun switchVisibilityErrorView(animationGravity: Int?) {
-        if (animationGravity != null)
-            animation.slideEdge = animationGravity
+    private fun switchVisibilityErrorView(alertAnimationGravity: Int?) {
+        if (alertAnimationGravity != null)
+            animation.slideEdge = alertAnimationGravity
         animation.duration = 500
         TransitionManager.beginDelayedTransition(this, animation)
     }
