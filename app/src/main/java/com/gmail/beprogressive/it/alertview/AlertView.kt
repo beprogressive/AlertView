@@ -17,7 +17,11 @@ import androidx.transition.TransitionManager
 
 class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
 
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    ) {
         init()
     }
 
@@ -29,11 +33,7 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
         @JvmStatic
         @BindingAdapter("alertMessage")
         fun setAlertMessage(view: AlertView, message: String?) {
-            view.findViewById<TextView>(R.id.alert_tv).text = message
-
-            view.switchVisibilityErrorView(null)
-            if (message == null || message == "") view.findViewById<TextView>(R.id.alert_tv).visibility = View.INVISIBLE
-            else view.findViewById<TextView>(R.id.alert_tv).visibility = View.VISIBLE
+            setAlertMessage(view, message, null)
         }
 
         @JvmStatic
@@ -42,7 +42,8 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
             view.findViewById<TextView>(R.id.alert_tv).text = message
 
             view.switchVisibilityErrorView(alertAnimationGravity)
-            if (message == null || message == "") view.findViewById<TextView>(R.id.alert_tv).visibility = View.INVISIBLE
+            if (message == null || message == "") view.findViewById<TextView>(R.id.alert_tv).visibility =
+                View.INVISIBLE
             else view.findViewById<TextView>(R.id.alert_tv).visibility = View.VISIBLE
         }
     }
