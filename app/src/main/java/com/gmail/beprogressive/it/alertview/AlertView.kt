@@ -65,9 +65,9 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
             true
         }
 
-        //        val a = context.obtainStyledAttributes(attrs, R.styleable.ErrorView, defStyle, 0)
-        //        val errorMessage = a.getString(R.styleable.ErrorView_errorMessage)
-        //        a.recycle()
+//                val a = context.obtainStyledAttributes(attrs, R.styleable.ErrorView, defStyle, 0)
+//                val errorMessage = a.getString(R.styleable.ErrorView_errorMessage)
+//                a.recycle()
     }
 
     private fun getErrorMessage(): String? {
