@@ -3,6 +3,8 @@ package com.gmail.beprogressive.it.alertview
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.transition.Slide
+import android.transition.TransitionManager
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MenuItem
@@ -13,8 +15,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingMethod
 import androidx.databinding.BindingMethods
-import androidx.transition.Slide
-import androidx.transition.TransitionManager
 
 @BindingMethods(
     BindingMethod(
