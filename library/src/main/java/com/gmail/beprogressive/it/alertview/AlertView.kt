@@ -61,7 +61,7 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
 
     private var animation = Slide(Gravity.TOP)
 
-    private fun getErrorMessage(): String? {
+    private fun getErrorMessage(): String {
         return findViewById<TextView>(R.id.alert_tv).text.toString()
     }
 
@@ -72,19 +72,22 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
 
     private fun hideErrorView() {
         switchVisibilityErrorView()
-        findViewById<TextView>(R.id.alert_tv).visibility = View.INVISIBLE
+        findViewById<TextView>(R.id.alert_tv).visibility = View.GONE
     }
 
-    fun setAlertMessage(message: String?) {
-        findViewById<TextView>(R.id.alert_tv).text = message
-        switchVisibilityErrorView()
-        if (message == null || message == "") findViewById<TextView>(R.id.alert_tv).visibility =
-            View.INVISIBLE
-        else findViewById<TextView>(R.id.alert_tv).visibility = View.VISIBLE
+    private fun setAlertMessage(message: String?) {
+        findViewById<TextView>(R.id.alert_tv).apply {
+            text = message
+            switchVisibilityErrorView()
+            visibility = if (message == null || message == "") View.GONE
+            else View.VISIBLE
+        }
+
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
-        if (item != null) when (item.title) {
+        if (item == null) return true
+        when (item.title) {
             "Copy" -> {
                 val clipboard =
                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
