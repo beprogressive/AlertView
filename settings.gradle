@@ -1,2 +1,2 @@
-include ':library'
+include ':AlertView'
 rootProject.name = "AlertView"
