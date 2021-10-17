@@ -1,3 +1,7 @@
+//plugins {
+//    id 'maven-publish'
+//}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
@@ -35,6 +39,18 @@ android {
 //        jvmTarget = JavaVersion.VERSION_1_8.toString()
 //    }
 }
+
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            groupId = 'com.github.beprogressive'
+//            artifactId = 'AlertView'
+//            version = '1.17'
+//
+//            from components.java
+//        }
+//    }
+//}
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
