@@ -27,3 +27,9 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+//configurations.all {
+//    resolutionStrategy {
+//        force 'androidx.core:core-ktx:1.7.0-rc01'
+//    }
+//}
