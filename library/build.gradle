@@ -48,3 +48,17 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.beprogressive'
+                artifactId = 'AlertView'
+                version = '1.20'
+            }
+        }
+    }
+}
