@@ -2,6 +2,8 @@
 <resources>
         <declare-styleable name="AlertView">
             <attr name="set_alert_message" format="string"/>
+            <attr name="set_alert_button_text" format="string"/>
+            <attr name="set_expandable" format="boolean"/>
             <attr name="alert_animation_gravity">
                 <flag name="top" value="48" />
                 <flag name="bottom" value="80" />
