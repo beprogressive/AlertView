@@ -124,15 +124,14 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
                 if (animate)
                     slideInRight()
                 else
-                visibility = View.VISIBLE
+                    visibility = View.VISIBLE
             } else {
                 if (animate)
                     slideOutRight {
-                        visibility = View.GONE
                         onAnimationEnd?.invoke()
                     }
                 else
-                visibility = View.GONE
+                    visibility = View.GONE
             }
 
             setOnClickListener { onButtonClick?.invoke(this@AlertView, getAlertMessage()) }
@@ -342,7 +341,7 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
      */
     @Suppress("UNUSED")
     fun setButtonClickListener(onButtonClick: ((alertView: AlertView, message: String?) -> Unit)? = null) {
-        
+
         this.onButtonClick = onButtonClick
 
         setButton(onButtonClick != null)

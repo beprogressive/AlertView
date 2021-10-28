@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import kotlin.math.sqrt
 
+
 class SwipeListener(private val view: AlertView): View.OnTouchListener {
 
     private val longPressHandler: Handler = Handler(Looper.getMainLooper())
@@ -51,7 +52,6 @@ class SwipeListener(private val view: AlertView): View.OnTouchListener {
                         .x(event.rawX + dX)
                         .setDuration(0)
                         .start()
-
                 }
             }
         }
