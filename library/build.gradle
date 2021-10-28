@@ -5,6 +5,10 @@ plugins {
     id 'maven-publish'
 }
 
+var version_name = "1.21"
+var group_id = 'com.github.beprogressive'
+var artifact_id = 'AlertView'
+
 android {
     compileSdk 31
 
@@ -12,7 +16,7 @@ android {
         minSdk 21
         targetSdk 31
         versionCode 1
-        versionName "1.20"
+        versionName version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -31,7 +35,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures{
+    buildFeatures {
         dataBinding true
     }
 }
@@ -55,9 +59,9 @@ afterEvaluate {
             // Creates a Maven publication called "release".
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.github.beprogressive'
-                artifactId = 'AlertView'
-                version = '1.20'
+                groupId = group_id
+                artifactId = artifact_id
+                version = version_name
             }
         }
     }
