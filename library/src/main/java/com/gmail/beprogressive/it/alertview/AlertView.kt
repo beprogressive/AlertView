@@ -2,8 +2,6 @@ package com.gmail.beprogressive.it.alertview
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -11,8 +9,6 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingMethod
 import androidx.databinding.BindingMethods
@@ -38,7 +34,15 @@ import androidx.transition.TransitionManager
         method = "setExpandable"
     ),
 )
-class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
+
+/**
+ * to avoid drag event overriding by other views, use `setAlertTouchListener`
+ */
+class AlertView : ConstraintLayout {
+
+    private companion object {
+        private const val COLLAPSED_MAX_LINES = 3
+    }
 
     @Suppress("Unused")
     val messageView: TextView by lazy {
@@ -59,9 +63,11 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
     fun collapsed() = messageView.lineCount > messageView.maxLines
 
     private var onStateChanged: ((isShown: Boolean?) -> Unit)? = null
-    private var onAlertClick: ((alertView: AlertView, message: String?) -> Unit)? = null
+    private var onAlertClick: ((alertView: AlertView, message: String?, collapsed: Boolean) -> Unit)? =
+        null
     private var onAlertLongClick: ((message: String?) -> Unit)? = null
     private var onButtonClick: ((alertView: AlertView, message: String?) -> Unit)? = null
+    private var onTouchAlertListener: ((Boolean) -> Unit)? = null
 
     private var transition = Slide(Gravity.TOP)
 
@@ -81,14 +87,7 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
         setOnTouchListener(SwipeListener(this))
 
         setOnLongClickListener {
-            if (onAlertLongClick != null)
-                onAlertLongClick?.invoke(getAlertMessage())
-            else {
-                val popupMenu = PopupMenu(context, this)
-                popupMenu.menu.add("Copy")
-                popupMenu.setOnMenuItemClickListener(this)
-                popupMenu.show()
-            }
+            onAlertLongClick?.invoke(getAlertMessage())
             true
         }
 
@@ -138,21 +137,22 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
         }
     }
 
-    private val collapsedMaxLines = 3
     private fun cycleTextViewExpansion(tv: TextView) {
         if (!expandable) return
 
         val showButton: Boolean
         val animation = ObjectAnimator.ofInt(
             tv, "maxLines",
-            if (tv.maxLines == collapsedMaxLines) {
+            if (tv.maxLines == COLLAPSED_MAX_LINES) {
+                // Set EXPANDED
                 arrowView.setImageResource(R.drawable.ic_less)
                 showButton = false
                 tv.lineCount
             } else {
+                // Set COLLAPSED
                 arrowView.setImageResource(R.drawable.ic_more)
                 showButton = true
-                collapsedMaxLines
+                COLLAPSED_MAX_LINES
             }
         )
         if (!showButton)
@@ -180,7 +180,6 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
             })
             animation.setDuration(200).start()
         }
-
     }
 
     private fun setupAnimation(gravity: Int) {
@@ -188,11 +187,12 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
         transition.duration = 500
     }
 
-    private fun switchVisibilityAlertView(
+    fun switchVisibilityAlertView(
         show: Boolean,
         customTransition: Transition = transition
     ) {
-        transition.addTarget(this)
+        customTransition.addTarget(this)
+
         (parent as? ViewGroup)?.let {
             TransitionManager.beginDelayedTransition(it, customTransition)
             visibility = if (show) View.VISIBLE else View.GONE
@@ -202,50 +202,16 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
     }
 
     private fun resetAlertView() {
-        messageView.maxLines = collapsedMaxLines
+        messageView.maxLines = COLLAPSED_MAX_LINES
         arrowView.setImageResource(R.drawable.ic_more)
-    }
-
-    @Suppress("Unused")
-    fun hideAlertView(toRight: Boolean = false) {
-
-        resetAlertView()
-
-        if (toRight) {
-
-            val customTransition = Slide(Gravity.RIGHT)
-
-            transition.duration = 400
-
-            customTransition.addListener(object : Transition.TransitionListener {
-
-                override fun onTransitionStart(transition: Transition) {
-                }
-
-                override fun onTransitionEnd(transition: Transition) {
-                    animate()
-                        .x(0F)
-                        .setDuration(0)
-                        .start()
-                }
-
-                override fun onTransitionCancel(transition: Transition) {
-                }
-
-                override fun onTransitionPause(transition: Transition) {
-                }
-
-                override fun onTransitionResume(transition: Transition) {
-                }
-            })
-
-            switchVisibilityAlertView(false, customTransition)
-
-        } else
-            switchVisibilityAlertView(false)
+        animate()
+            .setDuration(0)
+            .x(0F)
+            .start()
     }
 
     fun setAlertMessage(message: String?) {
+        resetAlertView()
         setMessage(message)
         switchVisibilityAlertView(message != null && message != "")
     }
@@ -269,14 +235,20 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
                         cycleTextViewExpansion(messageView)
                     }
                 else
-                    setOnClickListener {
-                        hideAlertView()
-                    }
+                    setOnClickListener(null)
             } else
                 setOnClickListener {
-                    onAlertClick?.invoke(this, message)
+                    onAlertClick?.invoke(
+                        this,
+                        message,
+                        messageView.lineCount > messageView.maxLines
+                    )
                 }
         }
+    }
+
+    fun onTouchAlert(touch: Boolean) {
+        onTouchAlertListener?.invoke(touch)
     }
 
     @Suppress("Unused")
@@ -285,37 +257,6 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
             buttonView.text = text
         else
             buttonView.text = context.getString(R.string.ok)
-    }
-
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        if (item != null) when (item.title) {
-            "Copy" -> {
-                val clipboard =
-                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip: ClipData = ClipData.newPlainText(null, getAlertMessage())
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, "Copied", Toast.LENGTH_SHORT).show()
-            }
-        }
-        return true
-    }
-
-    /**
-     * Overrides listeners
-     * @param onButtonClick if defined, the alert also shows the button
-     * @param onAlertClick if NOT defined and message fits folded max lines, hides the alert on alert click
-     */
-    @Suppress("UNUSED")
-    fun setListeners(
-        onStateChanged: ((isShown: Boolean?) -> Unit)? = null,
-        onAlertClick: ((alertView: AlertView, message: String?) -> Unit)? = null,
-        onAlertLongClick: ((message: String?) -> Unit)? = null,
-        onButtonClick: ((alertView: AlertView, message: String?) -> Unit)? = null,
-    ) {
-        this.onStateChanged = onStateChanged
-        this.onAlertClick = onAlertClick
-        this.onAlertLongClick = onAlertLongClick
-        this.onButtonClick = onButtonClick
     }
 
     @Suppress("UNUSED")
@@ -327,7 +268,7 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
      * @param onAlertClick if 'null' and message fits folded max lines, hides the alert on alert click
      */
     @Suppress("UNUSED")
-    fun setAlertClickListener(onAlertClick: ((alertView: AlertView, message: String?) -> Unit)? = null) {
+    fun setAlertClickListener(onAlertClick: ((alertView: AlertView, message: String?, collapsed: Boolean) -> Unit)? = null) {
         this.onAlertClick = onAlertClick
     }
 
@@ -345,5 +286,12 @@ class AlertView : ConstraintLayout, PopupMenu.OnMenuItemClickListener {
         this.onButtonClick = onButtonClick
 
         setButton(onButtonClick != null)
+    }
+
+    /**
+     * return `true` when Alert get `MotionEvent.ACTION_DOWN` and `false` when Alert get `MotionEvent.ACTION_UP` or `MotionEvent.ACTION_CANCEL`
+     */
+    fun setAlertTouchListener(onTouchEventListener: ((Boolean) -> Unit)? = null) {
+        this.onTouchAlertListener = onTouchEventListener
     }
 }

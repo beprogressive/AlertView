@@ -2,16 +2,19 @@ package com.gmail.beprogressive.it.alertview
 
 import android.os.Handler
 import android.os.Looper
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import androidx.transition.Slide
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 
-class SwipeListener(private val view: AlertView): View.OnTouchListener {
+class SwipeListener(private val view: AlertView) : View.OnTouchListener {
 
     private val longPressHandler: Handler = Handler(Looper.getMainLooper())
     private var longPressedRunnable = Runnable {
-        log("Long press detected in long press Handler!")
+        // Long press detected in long press Handler!
         view.performLongClick()
         isLongPressHandlerActivated = true
     }
@@ -26,7 +29,10 @@ class SwipeListener(private val view: AlertView): View.OnTouchListener {
     private var moveHorizontal = false
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
+
         if (event.action == MotionEvent.ACTION_DOWN) {
+            view.onTouchAlert(true)
+
             moveHorizontal = false
             longPressHandler.postDelayed(longPressedRunnable, 1000)
             dX = view.x - event.rawX
@@ -55,12 +61,13 @@ class SwipeListener(private val view: AlertView): View.OnTouchListener {
                 }
             }
         }
-        if (event.action == MotionEvent.ACTION_UP) {
+        if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
             val clickHandler = isActionMoveEventStored
             isActionMoveEventStored = false
             longPressHandler.removeCallbacks(longPressedRunnable)
+
             if (isLongPressHandlerActivated) {
-                log("Long Press detected; halting propagation of motion event")
+                // Long Press detected; halting propagation of motion event
                 isLongPressHandlerActivated = false
                 return false
             }
@@ -69,14 +76,21 @@ class SwipeListener(private val view: AlertView): View.OnTouchListener {
                 view.performClick()
             }
 
-            if (moveHorizontal && event.rawX > 800) {
-                view.hideAlertView(true)
-            } else
-                view.animate()
-                    .x(0F)
-                    .setDuration(200)
-                    .start()
+            if (moveHorizontal && shouldClose(view.x))
+                view.switchVisibilityAlertView(false, Slide(Gravity.END))
+            else if (moveHorizontal && shouldClose(abs(view.x)))
+                view.switchVisibilityAlertView(false, Slide(Gravity.START))
+            else view.animate()
+                .x(0F)
+                .setDuration(200)
+                .start()
+
+            view.onTouchAlert(false)
         }
         return true
+    }
+
+    private fun shouldClose(delta: Float): Boolean {
+        return delta > view.measuredWidth / 4
     }
 }

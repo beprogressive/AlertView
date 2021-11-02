@@ -1,11 +1,15 @@
 package com.gmail.beprogressive.it.alertview
 
 import android.animation.Animator
+import android.util.Log
 import android.view.View
-import timber.log.Timber
 
-inline fun <reified T> T.log(message: String) =
-    Timber.v(message)
+inline fun <reified T> T.log(message: String) {
+    var tag: String? = T::class.java.enclosingClass?.simpleName
+    if (tag == null)
+        tag = T::class.java.simpleName
+    Log.v(tag, message)
+}
 
 fun View.slideOutRight(onAnimationEnd: () -> Unit) {
 

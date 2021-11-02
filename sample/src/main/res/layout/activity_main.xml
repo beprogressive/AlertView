@@ -16,61 +16,89 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{viewModel.buttonMessage}"
-            android:onClick="@{(v) -> activity.onButtonClick()}"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <Button
-            android:id="@+id/button_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{viewModel.buttonLongMessage}"
-            android:onClick="@{(v) -> activity.onLongMessageButtonClick()}"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@+id/button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <com.gmail.beprogressive.it.alertview.AlertView
-            android:id="@+id/alert_view"
-            android:translationZ="50dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sliding_root"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:set_alert_message="@{viewModel.alertMessage}"
-            app:set_alert_button_text="@string/confirm"
-            app:set_expandable="@{viewModel.expandable}"/>
+            android:layout_height="match_parent"
+            android:background="@color/colorBackground"
+            android:elevation="0dp">
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/expandable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Expandable"
-            android:checked="@={viewModel.expandable}"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_1"/>
+            <Button
+                android:elevation="0dp"
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{(v) -> activity.onButtonClick()}"
+                android:text="@{viewModel.buttonMessage}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/enable_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enable button"
-            android:checked="@={viewModel.enableButton}"
-            android:layout_marginStart="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/expandable"/>
+            <Button
+                android:elevation="0dp"
+                android:id="@+id/button_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:onClick="@{(v) -> activity.onLongMessageButtonClick()}"
+                android:text="@{viewModel.buttonLongMessage}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/button_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:onClick="@{(v) -> activity.onStartFragmentClick()}"
+                android:text="Start Fragment"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_1" />
+
+            <com.gmail.beprogressive.it.alertview.AlertView
+                android:id="@+id/alert_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:translationZ="50dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:set_alert_button_text="@string/confirm"
+                app:set_alert_message="@{viewModel.alertMessage}"
+                app:set_expandable="@{viewModel.expandable}" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/expandable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:checked="@={viewModel.expandable}"
+                android:text="Expandable"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_2" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/enable_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:checked="@={viewModel.enableButton}"
+                android:text="Enable button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/expandable" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:elevation="10dp"
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

@@ -1,16 +1,23 @@
 package com.gmail.beprogressive.it.alertview.sample
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.Gravity
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.transition.Slide
 import com.gmail.beprogressive.it.alertview.log
 import com.gmail.beprogressive.it.alertview.sample.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity :
+//    AppCompatActivity() {
+    SlidingActivityExtended() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private var alertTouch = false
+//    var mSlidingView: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +32,41 @@ class MainActivity : AppCompatActivity() {
         binding.viewModel = viewModel
         binding.activity = this
 
+        binding.alertView.setAlertTouchListener {
+            alertTouch = it
+        }
+
+//        binding.alertView.setAlertClickListener { alertView, message, collapsed ->
+//            Toast.makeText(this, "Alert click!", Toast.LENGTH_SHORT).show()
+//        }
+
         subscribeToModel()
+    }
+
+    override fun getSlidingContainer(): View {
+        return binding.slidingRoot
+    }
+
+    override fun onSlidingFinished() {
+    }
+
+    override fun onSlidingStarted() {
+    }
+
+    override fun canSlideRight(): Boolean {
+        return !alertTouch
     }
 
     private fun subscribeToModel() {
         binding.viewModel?.enableButton?.observe(this) {
             if (it)
                 binding.alertView.setButtonClickListener { alertView, _ ->
-                    alertView.hideAlertView(false)
+
+                    alertView.switchVisibilityAlertView(
+                        false, Slide(
+                            Gravity.END
+                        )
+                    )
                 }
             else
                 binding.alertView.setButtonClickListener(null)
@@ -55,6 +89,20 @@ class MainActivity : AppCompatActivity() {
                     " Test Alert with really long message. Test Alert with really long message." +
                     " Test Alert with really long message. "
         )
+    }
+
+    fun onStartFragmentClick() {
+        startFragment()
+    }
+
+    private fun startFragment() {
+        supportFragmentManager.beginTransaction()
+            //                .setMaxLifecycle(fragment, Lifecycle.State.RESUMED)
+            .setCustomAnimations(
+                R.animator.slide_in_from_right, 0, 0,
+                R.animator.slide_out_to_right
+            ).add(R.id.container, FragmentMain(), "Fragment")
+            .addToBackStack("Fragment").commit()
     }
 }
 
