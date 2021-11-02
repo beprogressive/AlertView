@@ -9,10 +9,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.transition.Slide
 import com.gmail.beprogressive.it.alertview.log
 import com.gmail.beprogressive.it.alertview.sample.databinding.ActivityMainBinding
+import com.gmail.beprogressive.it.slidingactivity.SlidingActivity
 
 class MainActivity :
 //    AppCompatActivity() {
-    SlidingActivityExtended() {
+    SlidingActivity() {
 
     private lateinit var binding: ActivityMainBinding
 

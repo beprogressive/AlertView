@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.gmail.beprogressive.it.alertview.sample.databinding.FragmentBinding
+import com.gmail.beprogressive.it.slidingactivity.SlidingActivity
+import com.gmail.beprogressive.it.slidingactivity.SlidingFragment
 
 class FragmentMain : SlidingFragment() {
 
@@ -31,6 +33,6 @@ class FragmentMain : SlidingFragment() {
     }
 
     override fun canSlideRight(): Boolean {
-        return (activity as? SlidingActivityExtended)?.canSlideRight()?: false
+        return (activity as? SlidingActivity)?.canSlideRight()?: false
     }
 }

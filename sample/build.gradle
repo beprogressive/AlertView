@@ -49,5 +49,7 @@ dependencies {
 
     implementation "androidx.window:window:1.0.0-beta03"
 
+    implementation 'com.github.beprogressive:SlidingActivity:1.00.2'
+
     implementation project(':library')
 }
