@@ -35,7 +35,6 @@ class SwipeListener(private val view: AlertView) : View.OnTouchListener {
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
 
         if (event.action == MotionEvent.ACTION_DOWN) {
-            Log.v("SwipeListener", "onTouch ACTION_DOWN")
             initialX = event.x
             initialY = event.y
 
@@ -46,7 +45,6 @@ class SwipeListener(private val view: AlertView) : View.OnTouchListener {
             dX = view.x - event.rawX
         }
         if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_HOVER_MOVE) {
-            Log.v("SwipeListener", "onTouch ACTION_MOVE - $event")
             if (!isActionMoveEventStored) {
                 if (event.x - initialX < 2 && event.y - initialY < 2) return true
                 isActionMoveEventStored = true
@@ -72,7 +70,6 @@ class SwipeListener(private val view: AlertView) : View.OnTouchListener {
             }
         }
         if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
-            Log.v("SwipeListener", "onTouch ACTION_UP")
             val clickHandler = isActionMoveEventStored
             isActionMoveEventStored = false
             longPressHandler.removeCallbacks(longPressedRunnable)
