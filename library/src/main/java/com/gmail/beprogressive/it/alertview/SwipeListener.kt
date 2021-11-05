@@ -2,6 +2,7 @@ package com.gmail.beprogressive.it.alertview
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -25,12 +26,19 @@ class SwipeListener(private val view: AlertView) : View.OnTouchListener {
     private var lastActionMoveEventBeforeUpX = 0f
     private var lastActionMoveEventBeforeUpY = 0f
 
+    private var initialX = 0F
+    private var initialY = 0F
+
     private var dX = 0F
     private var moveHorizontal = false
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
 
         if (event.action == MotionEvent.ACTION_DOWN) {
+            Log.v("SwipeListener", "onTouch ACTION_DOWN")
+            initialX = event.x
+            initialY = event.y
+
             view.onTouchAlert(true)
 
             moveHorizontal = false
@@ -38,7 +46,9 @@ class SwipeListener(private val view: AlertView) : View.OnTouchListener {
             dX = view.x - event.rawX
         }
         if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_HOVER_MOVE) {
+            Log.v("SwipeListener", "onTouch ACTION_MOVE - $event")
             if (!isActionMoveEventStored) {
+                if (event.x - initialX < 2 && event.y - initialY < 2) return true
                 isActionMoveEventStored = true
                 lastActionMoveEventBeforeUpX = event.x
                 lastActionMoveEventBeforeUpY = event.y
@@ -51,7 +61,7 @@ class SwipeListener(private val view: AlertView) : View.OnTouchListener {
                     (
                             (currentY - firstY) * (currentY - firstY) + (currentX - firstX) * (currentX - firstX)).toDouble()
                 )
-                if (distance > 20) {
+                if (distance > 10) {
                     longPressHandler.removeCallbacks(longPressedRunnable)
                     moveHorizontal = true
                     view.animate()
@@ -62,6 +72,7 @@ class SwipeListener(private val view: AlertView) : View.OnTouchListener {
             }
         }
         if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+            Log.v("SwipeListener", "onTouch ACTION_UP")
             val clickHandler = isActionMoveEventStored
             isActionMoveEventStored = false
             longPressHandler.removeCallbacks(longPressedRunnable)

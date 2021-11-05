@@ -3,6 +3,7 @@ package com.gmail.beprogressive.it.alertview.sample
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -39,6 +40,7 @@ class MainActivity :
 
 //        binding.alertView.setAlertClickListener { alertView, message, collapsed ->
 //            Toast.makeText(this, "Alert click!", Toast.LENGTH_SHORT).show()
+//            alertView.switchExpandState()
 //        }
 
         subscribeToModel()

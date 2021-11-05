@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AlertView">
         <activity android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Translucent"
+            android:theme="@style/Theme.MaterialComponents.Translucent"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>

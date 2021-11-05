@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/remie/OneDrive/Gradles/AlertView/library/src/main/res/layout/view_alert.xml" value="0.2463768115942029" />
         <entry key="..\:/Users/remie/OneDrive/Gradles/AlertView/sample/src/main/res/layout/activity_main.xml" value="0.291213768115942" />
         <entry key="..\:/Users/remie/OneDrive/Gradles/AlertView/sample/src/main/res/layout/fragment.xml" value="0.291213768115942" />
       </map>
@@ -13,5 +14,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.2463768115942029" />
+      </ProjectState>
+    </option>
   </component>
 </project>
