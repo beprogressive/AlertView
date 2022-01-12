@@ -3,6 +3,9 @@ package com.gmail.beprogressive.it.alertview
 import android.animation.Animator
 import android.util.Log
 import android.view.View
+import kotlinx.coroutines.*
+import java.util.*
+import kotlin.concurrent.timerTask
 
 inline fun <reified T> T.log(message: String) {
     var tag: String? = T::class.java.enclosingClass?.simpleName
@@ -55,4 +58,15 @@ fun View.slideInRight() {
 
         })
         .start()
+}
+
+val waitAndRunScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+inline fun waitAndRun(delay: Long, crossinline function: () -> (Unit)) {
+    val timer = Timer()
+    timer.schedule(timerTask {
+        waitAndRunScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main)
+            { function() }
+        }
+    }, delay)
 }

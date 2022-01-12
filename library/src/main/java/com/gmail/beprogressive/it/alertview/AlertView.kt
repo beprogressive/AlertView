@@ -62,14 +62,15 @@ class AlertView : ConstraintLayout {
     @Suppress("Unused")
     fun collapsed() = messageView.lineCount > messageView.maxLines
 
-    private var onStateChanged: ((isShown: Boolean?) -> Unit)? = null
+    private var onStateChanged: ((isShown: Boolean) -> Unit)? = null
     private var onAlertClick: ((alertView: AlertView, message: String?, collapsed: Boolean) -> Unit)? =
         null
     private var onAlertLongClick: ((message: String?) -> Unit)? = null
     private var onButtonClick: ((alertView: AlertView, message: String?) -> Unit)? = null
     private var onTouchAlertListener: ((Boolean) -> Unit)? = null
 
-    private var transition = Slide(Gravity.TOP)
+    //    private var transition = Slide(Gravity.TOP)
+    private var gravity = Gravity.TOP
 
     constructor(context: Context) :
             this(context, null)
@@ -183,25 +184,39 @@ class AlertView : ConstraintLayout {
     }
 
     private fun setupAnimation(gravity: Int) {
-        transition = Slide(gravity)
+//        transition = Slide(gravity)
+        this.gravity = gravity
+//        transition.duration = 500
+    }
+
+    private fun getTransition(): Slide {
+        val transition = Slide(gravity)
         transition.duration = 500
+        return transition
     }
 
     fun switchVisibilityAlertView(
         show: Boolean,
-        customTransition: Transition = transition
+        transition: Transition
     ) {
-        customTransition.addTarget(this)
+        if (show && visibility == View.VISIBLE) return
+        if (!show && visibility == View.GONE) return
+        transition.addTarget(this)
 
         (parent as? ViewGroup)?.let {
-            TransitionManager.beginDelayedTransition(it, customTransition)
+            TransitionManager.beginDelayedTransition(it, transition)
             visibility = if (show) View.VISIBLE else View.GONE
+            if (!show) // TODO workaround while TransitionListener not called!
+                waitAndRun(500) {
+                    resetAlertView()
+                }
         }
 
         onStateChanged?.invoke(show)
     }
 
     private fun resetAlertView() {
+        messageView.text = ""
         messageView.maxLines = COLLAPSED_MAX_LINES
         arrowView.setImageResource(R.drawable.ic_more)
         animate()
@@ -211,12 +226,35 @@ class AlertView : ConstraintLayout {
     }
 
     fun setAlertMessage(message: String?) {
-        resetAlertView()
+        if (message == null || message == "") {
+            val transition = getTransition()
+            val listenerTransition = transition.addListener(object : Transition.TransitionListener {
+                override fun onTransitionStart(transition: Transition) {
+                }
+
+                override fun onTransitionEnd(transition: Transition) {
+                    resetAlertView()
+                }
+
+                override fun onTransitionCancel(transition: Transition) {
+                }
+
+                override fun onTransitionPause(transition: Transition) {
+                }
+
+                override fun onTransitionResume(transition: Transition) {
+                }
+
+            })
+            switchVisibilityAlertView(false, listenerTransition)
+            return
+        }
+
         setMessage(message)
-        switchVisibilityAlertView(message != null && message != "")
+        switchVisibilityAlertView(true, getTransition())
     }
 
-    private fun setMessage(message: String?) {
+    private fun setMessage(message: String) {
 
         messageView.text = message
 
@@ -260,7 +298,7 @@ class AlertView : ConstraintLayout {
     }
 
     @Suppress("UNUSED")
-    fun setStateListener(onStateChanged: ((isShown: Boolean?) -> Unit)? = null) {
+    fun setStateListener(onStateChanged: ((isShown: Boolean) -> Unit)? = null) {
         this.onStateChanged = onStateChanged
     }
 

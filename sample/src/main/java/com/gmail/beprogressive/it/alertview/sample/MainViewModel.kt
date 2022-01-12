@@ -14,4 +14,8 @@ class MainViewModel : ViewModel() {
     fun setAlertMessage(message: String?) {
         alertMessage.value = message
     }
+
+    fun clearAlertMessage() {
+        alertMessage.value = null
+    }
 }

@@ -38,6 +38,11 @@ class MainActivity :
             alertTouch = it
         }
 
+        binding.alertView.setStateListener {
+            if (!it)
+                binding.viewModel?.clearAlertMessage()
+        }
+
 //        binding.alertView.setAlertClickListener { alertView, message, collapsed ->
 //            Toast.makeText(this, "Alert click!", Toast.LENGTH_SHORT).show()
 //            alertView.switchExpandState()
